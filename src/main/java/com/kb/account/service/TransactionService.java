@@ -16,5 +16,3 @@ public interface TransactionService {
     TransactionDTO updateTransactionWithBill(String id, TransactionDTO transactionDTO, MultipartFile billImage);
     void deleteTransaction(String id);
 }
-
-

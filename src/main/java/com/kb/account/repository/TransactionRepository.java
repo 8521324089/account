@@ -1,6 +1,7 @@
 package com.kb.account.repository;
 
 import com.kb.account.model.Transaction;
+import com.kb.account.model.TransactionType;
 import com.kb.account.model.User;
 import com.kb.account.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,5 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
     List<Transaction> findByUser(User user);
     List<Transaction> findByPerson(Person person);
-    List<Transaction> findByUserAndType(User user, String type);
+    List<Transaction> findByUserAndType(User user, TransactionType type);
 }

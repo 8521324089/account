@@ -1,36 +1,38 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Android
 *.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Log Files
+*.log
+
+# IntelliJ
+*.iws
 *.ipr
+/out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Keystore files
+*.jks
+*.keystore
 
-### VS Code ###
-.vscode/
+# Google Services
+google-services.json
 
-### Environment ###
-.env
+# Backup files
+*.bak
+
+# Build artifacts
+bin/
+gen/
+
+# Local configuration
+android-app/app/local.properties
+android-app/.gradle/
+android-app/build/
+android-app/app/build/

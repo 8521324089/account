@@ -4,10 +4,12 @@ import android.content.ContentProviderOperation
 import android.content.Context
 import android.provider.ContactsContract
 import com.kb.ledger.data.model.Person
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ContactManager(private val context: Context) {
 
-    fun fetchPhoneContacts(): List<Person> {
+    suspend fun fetchPhoneContacts(): List<Person> = withContext(Dispatchers.IO) {
         val contacts = mutableListOf<Person>()
         val cursor = context.contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -19,16 +21,16 @@ class ContactManager(private val context: Context) {
             val contactIdIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
 
             while (it.moveToNext()) {
-                val name = it.getString(nameIndex)
-                val phone = it.getString(phoneIndex)
+                val name = it.getString(nameIndex) ?: continue
+                val phone = it.getString(phoneIndex) ?: continue
                 val contactId = it.getString(contactIdIndex)
                 contacts.add(Person(name = name, phone = phone, contactId = contactId))
             }
         }
-        return contacts
+        contacts
     }
 
-    fun saveToPhoneContacts(name: String, phone: String) {
+    suspend fun saveToPhoneContacts(name: String, phone: String) = withContext(Dispatchers.IO) {
         val ops = ArrayList<ContentProviderOperation>()
 
         ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -52,7 +54,7 @@ class ContactManager(private val context: Context) {
         try {
             context.contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
         } catch (e: Exception) {
-            e.printStackTrace()
+            SafeLogger.log("ContactManager", "Failed to save contact to address book", e)
         }
     }
 }

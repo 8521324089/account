@@ -1,1 +1,36 @@
 *.hprof
+
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Keystore and signing secrets - NEVER COMMIT
+*.jks
+*.keystore
+keystore.properties
+*.p12
+
+# Local configuration
+local.properties
+
+# Gradle and build output
+.gradle/
+build/
+app/build/
+
+# Database files and local device backup copies - NEVER COMMIT
+*.db
+*.db-wal
+*.db-shm
+phone_database_backup/
+*.bak
+
+# Temporary scratch and experiment files
+scratch/
+
+# Documentation & Engineering Evidence Policy:
+# - dev-logs/ is TRACKED for recent sanitized 7-day engineering context.
+# - release-evidence/ is TRACKED for permanent, non-sensitive release audits.
+# - Do NOT commit private customer records, raw JSON database dumps, or credentials into these folders.

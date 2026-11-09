@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LedgerApp</string>
+    <string name="total_you_give">Total You Give</string>
+    <string name="total_you_give_desc">Total outstanding owed by you</string>
+    <string name="total_you_get">Total You Get</string>
+    <string name="total_you_get_desc">Total outstanding owed to you</string>
+    <string name="received_today">Received Today</string>
+    <string name="received_today_desc">Total payments collected today</string>
+    <string name="search_hint">Search name or number</string>
+    <string name="active">Active</string>
+    <string name="archived">Archived</string>
+    <string name="add_customer">Add Customer</string>
+    <string name="add_new_customer">Add New Customer</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="restore">Restore</string>
+    <string name="archive">Archive</string>
+    <string name="you_gave">YOU GAVE ₹</string>
+    <string name="you_got">YOU GOT ₹</string>
+    <string name="gave">Gave</string>
+    <string name="got">Got</string>
+    <string name="settled">Settled</string>
+    <string name="export_statement">Export Statement</string>
+    <string name="payment_reminder">Payment Reminder</string>
+    <string name="recurring_transactions">Recurring Transactions</string>
+    <string name="analytics">Analytics &amp; Reports</string>
+    <string name="app_lock">App Lock (Biometrics/PIN)</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language">Language</string>
+    <string name="discard_edits_title">Discard Unsaved Edits?</string>
+    <string name="discard_edits_msg">You have unsaved changes. Are you sure you want to discard them?</string>
+    <string name="image_unavailable">Image unavailable</string>
+    <string name="tap_to_replace">Tap to replace</string>
+    <string name="recent_customers">Recent Customers</string>
+    <string name="search_results">Search Results</string>
+    <string name="save_to_contacts">Save to Phone Contacts</string>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">लेज़र ऐप</string>
+    <string name="total_you_give">कुल देना है</string>
+    <string name="total_you_give_desc">आपके द्वारा बकाया कुल राशि</string>
+    <string name="total_you_get">कुल लेना है</string>
+    <string name="total_you_get_desc">आपको मिलने वाली कुल राशि</string>
+    <string name="received_today">आज प्राप्त हुआ</string>
+    <string name="received_today_desc">आज एकत्र किया गया कुल भुगतान</string>
+    <string name="search_hint">नाम या नंबर खोजें</string>
+    <string name="active">सक्रिय</string>
+    <string name="archived">आर्काइव</string>
+    <string name="add_customer">ग्राहक जोड़ें</string>
+    <string name="add_new_customer">नया ग्राहक जोड़ें</string>
+    <string name="save">सहेजें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="delete">हटाएं</string>
+    <string name="edit">संपादित करें</string>
+    <string name="restore">पुनर्स्थापित करें</string>
+    <string name="archive">आर्काइव करें</string>
+    <string name="you_gave">आपने दिया ₹</string>
+    <string name="you_got">आपको मिला ₹</string>
+    <string name="gave">दिया</string>
+    <string name="got">मिला</string>
+    <string name="settled">चुकता</string>
+    <string name="export_statement">खाता विवरण निकालें</string>
+    <string name="payment_reminder">भुगतान अनुस्मारक</string>
+    <string name="recurring_transactions">आवर्ती लेन-देन</string>
+    <string name="analytics">एनालिटिक्स एवं रिपोर्ट</string>
+    <string name="app_lock">ऐप लॉक (बायोमेट्रिक्स/पिन)</string>
+    <string name="appearance">थीम / दिखावट</string>
+    <string name="theme_system">सिस्टम डिफ़ॉल्ट</string>
+    <string name="theme_light">लाइट मोड</string>
+    <string name="theme_dark">डार्क मोड</string>
+    <string name="language">भाषा</string>
+    <string name="discard_edits_title">असंरक्षित बदलाव छोड़ें?</string>
+    <string name="discard_edits_msg">आपके पास असंरक्षित बदलाव हैं। क्या आप वाकई उन्हें छोड़ना चाहते हैं?</string>
+    <string name="image_unavailable">छवि उपलब्ध नहीं है</string>
+    <string name="tap_to_replace">बदलने के लिए टैप करें</string>
+    <string name="recent_customers">हाल के ग्राहक</string>
+    <string name="search_results">खोज परिणाम</string>
+    <string name="save_to_contacts">फ़ोन संपर्कों में सहेजें</string>
+</resources>

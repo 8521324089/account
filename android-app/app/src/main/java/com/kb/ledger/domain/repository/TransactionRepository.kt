@@ -34,6 +34,20 @@ interface TransactionRepository {
     /** Sum of RECEIVE amounts between [todayStartMillis] and [todayEndMillis] (for dashboard). */
     fun observeTotalReceiveToday(todayStartMillis: Long, todayEndMillis: Long): Flow<Long>
 
+    /** Customer: Total outstanding amount owed by you to customers. */
+    fun observeCustomerTotalYouGive(): Flow<Long> = observeTotalYouGive()
+
+    /** Customer: Sum of RECEIVE amounts from customers between todayStartMillis and todayEndMillis. */
+    fun observeCustomerReceiveToday(todayStartMillis: Long, todayEndMillis: Long): Flow<Long> =
+        observeTotalReceiveToday(todayStartMillis, todayEndMillis)
+
+    /** Supplier: Total payable to suppliers (positive debt, advances not offset). */
+    fun observeSupplierTotalPayable(): Flow<Long> = kotlinx.coroutines.flow.flowOf(0L)
+
+    /** Supplier: Sum of GIVE amounts paid to suppliers between todayStartMillis and todayEndMillis. */
+    fun observeSupplierPaidToday(todayStartMillis: Long, todayEndMillis: Long): Flow<Long> =
+        kotlinx.coroutines.flow.flowOf(0L)
+
     /**
      * Save a new transaction locally and mark PENDING_UPLOAD.
      * Sync worker will push to Drive.

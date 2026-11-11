@@ -1109,8 +1109,8 @@ adb -s LR8H55PB9PMRNFUO shell "am start -W -n com.kb.ledger/.MainActivity"
 ---
 
 ## Session 22 — SAF Backup/Restore Hardening Pass (Concurrency Synchronization, Byte-Signature Image Validation, Privacy-Safe Diagnostics)
-**Date:** 2026-10-25T20:30:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-25T20:30:00+05:30
+**Status:** COMPLETED
 
 ### What Was Implemented
 
@@ -1148,8 +1148,8 @@ adb -s LR8H55PB9PMRNFUO shell "am start -W -n com.kb.ledger/.MainActivity"
 ---
 
 ## Session 23 — Phase 2 Isolated External Backup Validation (Synthetic Data & Deterministic Fault Injection)
-**Date:** 2026-10-25T20:55:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-25T20:55:00+05:30
+**Status:** COMPLETED
 
 ### Context & Safety Blocker Notice
 - Detected that the primary physical device (`LR8H55PB9PMRNFUO`, OnePlus Nord CE 2 5G) was physically connected via USB (`transport_id: 11`).
@@ -1195,8 +1195,8 @@ adb -s LR8H55PB9PMRNFUO shell "am start -W -n com.kb.ledger/.MainActivity"
 ---
 
 ## Session 24 — Android Emulator SAF UI & Process Interruption Validation
-**Date:** 2026-10-25T21:15:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-25T21:15:00+05:30
+**Status:** COMPLETED
 
 ### Context & Device Isolation
 - Disconnected OnePlus physical device confirmed with user authorization. Verified zero ADB devices before proceeding.
@@ -1235,8 +1235,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 25 — SAF Export Failure Safety & Actionable Import Feedback
-**Date:** 2026-10-25T21:50:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-25T21:50:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Task A: SAF Export Failure Safety (`BackupManager.exportData`):**
@@ -1265,8 +1265,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 26 — Targeted Remediation: Backup Export Concurrency, Missing Attachments & Versioned Filenames
-**Date:** 2026-10-25T22:15:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-25T22:15:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Task 1: Backup Export Concurrency Coordination (`BackupManager.exportData`):**
@@ -1295,8 +1295,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 27 — Targeted Remediation: Coroutine Cancellation, Deleted Transaction Warnings & Concurrency Test Clarification
-**Date:** 2026-10-30T10:20:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-30T10:20:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Targeted Fix 1: Coroutine Cancellation Preservation (`BackupManager.kt`):**
@@ -1332,8 +1332,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 
 
 ## Session 28 — Final Release Audit: printStackTrace Elimination, Release Decision
-**Date:** 2026-10-30T10:46:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-30T10:46:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Fix: Eliminate raw `printStackTrace()` from production code:**
@@ -1364,8 +1364,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 29 — Evidence-Based Final Release Readiness Verification Audit
-**Date:** 2026-10-30T11:35:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-30T11:35:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Safety Enforcement:**
@@ -1424,8 +1424,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 30 — Google Sign-In Blocker Remediation & Clean-Install Release Candidate Verification
-**Date:** 2026-10-30T12:10:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-30T12:10:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Safety Enforcement:**
@@ -1484,8 +1484,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 31 — Final Release Gate: ANR Investigation, Deterministic UI Smoke Tests, Native Receipt Image Decoding, and v1.0.2 Gate
-**Date:** 2026-10-30T13:00:00+05:30  
-**Status:** COMPLETED  
+**Date:** 2026-10-30T13:00:00+05:30
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **ANR Deep-Dive Investigation:**
@@ -1534,8 +1534,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 32 — Android 16 (API 36) Migration, Native Camera Receipt Attachment, UI Polish, and v1.0.3 Release Gate
-**Date:** 2026-11-01  
-**Status:** COMPLETED  
+**Date:** 2026-11-01
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Camera Receipt Capture & FileProvider Architecture:**
@@ -1587,8 +1587,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 33 — Sync UI De-cluttering, Release Evidence Reconciliation, and v1.0.3 Verification
-**Date:** 2026-11-01  
-**Status:** COMPLETED  
+**Date:** 2026-11-01
+**Status:** COMPLETED
 
 ### Context & Implementation Summary
 1. **Per-Transaction Sync Badge Removal:**
@@ -1615,8 +1615,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 34 — OnePlus 10R Physical Device Safeguard Audit, Cryptographic Upgrade Blocker, and Off-Device Backup Verification
-**Date:** 2026-11-01  
-**Status:** COMPLETED — INSTALLATION BLOCKED DUE TO SIGNATURE MISMATCH (0 DATA LOSS)  
+**Date:** 2026-11-01
+**Status:** COMPLETED — INSTALLATION BLOCKED DUE TO SIGNATURE MISMATCH (0 DATA LOSS)
 
 ### Context & Implementation Summary
 1. **Physical Phone Identity Verification:**
@@ -1654,8 +1654,8 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
 ---
 
 ## Session 35 — Authorized Fresh Production Installation on OnePlus 10R
-**Date:** 2026-11-01  
-**Status:** COMPLETED — FRESH INSTALLATION SUCCESSFUL ON PHYSICAL PHONE  
+**Date:** 2026-11-01
+**Status:** COMPLETED — FRESH INSTALLATION SUCCESSFUL ON PHYSICAL PHONE
 
 ### Context & Implementation Summary
 1. **Operator Authorization:**
@@ -1679,6 +1679,85 @@ The 10 emulator validation tests were executed across 4 distinct execution modes
    - Authored `release-evidence/ONEPLUS_10R_V1.0.3_FRESH_INSTALL_REPORT.md`.
    - Application verified ready for original business data entry.
 
+---
 
+## Session 36 — Ledger v1.0.4: Customer/Supplier Separation & Individual Transaction Deletion
+**Date:** 2026-11-09
+**Status:** COMPLETED — PRODUCTION RELEASE CANDIDATE VERIFIED & SIGNED
 
+### Context & Implementation Summary
+1. **Scope & Objectives:**
+   - Deliver Customer & Supplier Ledger Separation with dual-mode toggle, distinct entity roles, independent transactions, and same-phone coexistence.
+   - Deliver Individual Transaction Deletion with accessible overflow menu, safety confirmation dialog, soft-deletion, and immediate balance updates.
+   - Maintain 100% backward compatibility, local-first safety, and zero regression to production data.
+2. **Database & Architecture Upgrades:**
+   - Room Schema 5 to 6: `ALTER TABLE persons ADD COLUMN role TEXT NOT NULL DEFAULT 'CUSTOMER'`.
+   - Domain Model: Added `PersonRole { CUSTOMER, SUPPLIER }` to `Person.kt` and `PersonDomain.kt`.
+   - DAOs & Repositories: Added role-filtered queries and aggregations across `PersonDao`, `TransactionDao`, `PersonRepository`, and `TransactionRepository`.
+   - Contact Search Helper: Enhanced comparison key `${person.role.name}|||$normName|||$normPhone` to prevent deduplication or merging across roles.
+   - Backup Manager: Bumped `CURRENT_SCHEMA_VERSION = 4` with role serialization and backward compatibility.
+3. **UI Enhancements (`MainActivity.kt` & `HomeViewModel.kt`):**
+   - Implemented `LedgerModeToggle` positioned immediately above search bar with $\ge 48\text{dp}$ touch targets.
+   - Dashboard cards dynamically switch between Customer mode (Total You Give / Received Today) and Supplier mode (Total Payable / Paid Today).
+   - Transaction screens adapt button labels ("YOU PAID ₹" and "GOODS RECEIVED ₹" for suppliers).
+   - Added `MoreVert` overflow menu on transaction items with "Edit Transaction" and "Delete Transaction".
+   - Added `DeleteTransactionDialog` with explicit amount, recipient, and balance recalculation warning.
+4. **Automated Testing:**
+   - Added unit tests: `Migration5To6Test.kt`, `SupplierAccountingTest.kt`, `TransactionDeletionTest.kt`, `BackupSchemaV4Test.kt`.
+   - Updated migration chain: `FullChainedMigrationTest.kt` (v2->v3->v4->v5->v6).
+   - Test suite status: 350/350 tests passing (0 failures, 0 errors, 0 skipped).
+   - Dev logs audit: 6/6 tests passed.
+   - Git diff check: Clean (0 whitespace/syntax issues).
+5. **Release Packaging & Signing:**
+   - Upgraded `versionCode = 5`, `versionName = "1.0.4"` in `app/build.gradle.kts`.
+   - Built Release APK: `app-release.apk` (SHA-256: `29ca73857f07180c671c63cbdfca581baae73e72a141be2a3f66fb586507c003`).
+   - Built Release AAB: `app-release.aab` (SHA-256: `8c6f9c8771e34cbd3dfbf13ccf9e7867a7e9006c979bf71fa20796ce2b1124fc`).
+   - Permanent release key signature verified: `4a449fe003664d2f10f52e44da7f9a2f9fde0fe5ce0759a8296e3b010fd9a7d5`.
+6. **Emulator E2E Verification (`emulator-5554`, API 36):**
+   - Installed release APK in-place over v1.0.3; verified successful Room 5->6 schema upgrade.
+   - Created Supplier `Rahul Traders` (phone `9876543210`) with 4 transactions; verified balance "Total You Owe ₹8000.0".
+   - Verified Supplier Dashboard: Total Payable ₹8000.0, Paid Today ₹4000.0.
+   - Deleted ₹1,000 payment transaction via overflow menu and confirmation dialog; verified immediate balance update to ₹9000.0.
+   - Created Customer `Rahul Customer` sharing identical phone `9876543210`; verified complete isolation from `Rahul Traders`.
+   - Exported and imported SAF schema 4 backup; verified 100% round-trip fidelity.
+   - Captured 8 evidence screenshots in `release-evidence/v1.0.4/`.
+7. **Documentation:**
+   - Authored `release-evidence/V1.0.4_CUSTOMER_SUPPLIER_AND_DELETE_VERIFICATION.md`.
+   - Updated `PROJECT_CONTEXT.md`, `PROGRESS_LOG.md`, `DECISIONS.md`.
+   - Release Verdict: **GO FOR RELEASE**.
 
+---
+
+## Session 37 — Ledger v1.0.5: Supplier Contact Picker, Enhanced Phone Search & Authorized OnePlus 10R Rollout
+**Date:** 2026-11-10
+**Status:** COMPLETED — DEPLOYED IN-PLACE TO ONEPLUS 10R & DATA PRESERVATION VERIFIED (100% MATCH)
+
+### Context & Root Cause
+1. **Reported Defect on OnePlus 10R (`v1.0.4`):** Switching to Supplier mode lacked phone-contact selection when creating a new supplier (`AddPersonDialog` had no contact picker), searching by phone number prefilled the name field instead of the phone field, zero-tx newly created suppliers disappeared from the empty-search Suppliers dashboard, and partial phone searches with country codes/spaces (`+91 98765`, `09876`) missed matches. Customer mode still showed phone numbers only because ~4,188 address-book entries had previously been synced into `PersonRole.CUSTOMER`.
+2. **Database Safety & Constraints:** Zero Room schema changes (`Schema 6` kept); zero changes to Customer dashboard/search behavior.
+
+### Implementation & Testing Summary
+1. **`ContactManager.kt`:**
+   - Implemented `createPhonePickIntent()` (`ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE`) requiring zero `READ_CONTACTS` permission via Android's transient single-row URI permission grant, plus `resolvePickedContact(uri)` handling single-row `data/` URIs, contact lookup/entity fallbacks, `deduplicatePhoneOptions()`, and `formatPhoneTypeLabel()`.
+2. **`ContactSearchHelper.kt`:**
+   - Enhanced `matchesQuery()` for full, partial, spaced, trunk `0`, and country-code phone searches without mutating stored phone numbers.
+   - Added `splitInitialPersonQuery()`, `filterAndGroupForRole()`, `findExactDuplicate()`, and `findPhoneDuplicate()`.
+3. **`HomeViewModel.kt` & `MainActivity.kt`:**
+   - `AddPersonDialog`: Added `"Pick from Phone Contacts"`, multi-number chooser dialog, graceful no-phone status notice, live duplicate supplier warning (`Open Existing`), editable Name/Phone fields, and smart phone-vs-name prefill.
+   - `TransactionSearchDialog`: Always exposes `"+ Create New Supplier"` / `"+ Create New Customer"` and forwards the typed query.
+   - `HomeViewModel`: Displays active/archived Suppliers immediately on the Suppliers dashboard while keeping Customers dashboard invariant untouched; deduplicates exact same-role creation in `addPerson`.
+4. **Automated & Emulator Verification:**
+   - Unit tests (`./gradlew testDebugUnitTest --rerun-tasks`): **359/359 passing across 33 suites** (added `SupplierContactAndSearchTest.kt` with 9 tests).
+   - Instrumentation tests on `emulator-5554` (API 36): **10/10 passing** (`SupplierContactUiTest.kt` 7 tests + `DriveIntegrationTest.kt` 3 tests).
+   - API 35 emulator (`emulator-5556`, `READ_CONTACTS: granted=false`): Verified real Google Contacts picking (`Metro Wholesale`, `Global Hardware` multi-number), duplicate detection, partial/country-code search, Customer isolation, SAF Schema 4 round-trip, and captured 8 screenshots in `release-evidence/v1.0.5/`.
+   - Hygiene checks: `python3 scripts/test_clean_dev_logs.py` (6/6 OK), `git diff --check` (0 errors).
+5. **Release Artifacts (`v1.0.5`, `versionCode 6`):**
+   - APK: `release-evidence/v1.0.5/app-release-v1.0.5.apk` (`16,068,176` bytes, SHA-256: `bee688207b07649b702e60bd7c7fe422d32951ddc9e8a606968a8160409296b6`).
+   - AAB: `release-evidence/v1.0.5/app-release-v1.0.5.aab` (`15,047,478` bytes, SHA-256: `fa7ec66d7a0f52b32238063b983f8a3a29379af98413f48a30a52f6c8b88efe0`).
+   - Signer Cert SHA-256: `4a449fe003664d2f10f52e44da7f9a2f9fde0fe5ce0759a8296e3b010fd9a7d5`.
+   - Preserved all `v1.0.4` release artifacts untouched.
+6. **Authorized Physical OnePlus 10R (`CPH2423`, `LR8H55PB9PMRNFUO`) Deployment:**
+   - Exported fresh pre-install v1.0.4 SAF backup (`ledger_backup_20261110_140659.json`, `1,482,901` bytes, SHA-256 `510872b88f45977dcddc852cb4502fcb505ec53fc453a400b6546b80808ef2b0`), verified JSON integrity & dual local copies before installing.
+   - Executed in-place update: `adb -s LR8H55PB9PMRNFUO install -r release-evidence/v1.0.5/app-release-v1.0.5.apk` (`Success`).
+   - Post-install verification: `versionName=1.0.5`, `versionCode=6`, signing cert matched, `Total You Give ₹110.0`, `Active (2)` customers, Suppliers toggle + read-only `"Pick from Phone Contacts"` launch verified without `READ_CONTACTS` or creating test records, post-install SAF backup (`ledger_backup_20261110_140928.json`, SHA-256 `0049dbac...`) matched 100% across all 4,190 persons (`CUSTOMER`), 4 transactions (`2` active, `2` deleted), 0 recurring rules, 0 bill images; 0 crashes in logcat.
+   - Documented in `release-evidence/v1.0.5/ONEPLUS_10R_V1.0.5_INSTALLATION_REPORT_2026-11-10.md`.

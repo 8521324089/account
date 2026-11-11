@@ -1,11 +1,21 @@
 package com.kb.ledger.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Room entity for a customer / person.
+ * Role of a ledger entity: Customer or Supplier.
+ */
+enum class PersonRole {
+    CUSTOMER,
+    SUPPLIER
+}
+
+/**
+ * Room entity for a customer / supplier / person.
  *
+ * [role]         Ledger role: CUSTOMER (default) or SUPPLIER.
  * [cloudId]      Stable UUID for Google Drive JSON identity.
  *                Null until the record has been synced at least once.
  * [updatedAt]    UTC epoch millis of the last modification. Used for conflict resolution.
@@ -25,5 +35,7 @@ data class Person(
     val updatedBy: String? = null,
     val isDeleted: Boolean = false,
     val syncPending: Boolean = true,
-    val isArchived: Boolean = false
+    val isArchived: Boolean = false,
+    @ColumnInfo(defaultValue = "CUSTOMER")
+    val role: PersonRole = PersonRole.CUSTOMER
 )

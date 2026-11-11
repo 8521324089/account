@@ -14,14 +14,15 @@
 - **Primary Language:** Kotlin 2.0.21
 - **UI Framework:** Jetpack Compose (Compose BOM 2024.11.00, Material3)
 - **Local Database:** Room 2.6.1 with KSP 2.0.21-1.0.27
-- **Current Version:** `versionCode = 4`, `versionName = "1.0.3"`
+- **Current Version:** `versionCode = 6`, `versionName = "1.0.5"`
 - **Build System:** Gradle 9.0, Android Gradle Plugin (AGP) 8.7.2
 - **Required JDK for Command-Line / Gradle:** Eclipse Temurin JDK 17 (installed at `~/Library/Java/JavaVirtualMachines/jdk-17.0.21+9/Contents/Home`). *Note: JDK 25 triggers AGP 8.7.2 lint-vital parsing errors (`IllegalArgumentException: 25.0.3`); JDK 17 is officially supported and verified for both debug and release builds.*
 - **Release Signing:** Permanent 4096-bit RSA key (`ledger-prod-release`) configured via `keystore.properties` loading `ledger-release.jks` (both excluded from Git in `.gitignore`). SHA-256 fingerprint: `4A:44:9F:E0:03:66:4D:2F:10:F5:2E:44:DA:7F:9A:2F:9F:DE:0F:E5:CE:07:59:A8:29:6E:3B:01:0F:D9:A7:D5`. Debug build retains default debug keystore.
-- **Automated Tests:** 340/340 unit and migration tests passing across 28 suites (0 failures, 0 errors, 0 skipped).
-- **Release Artifacts (v1.0.3):**
-  - APK: `app/build/outputs/apk/release/app-release.apk` (16,035,408 bytes, SHA-256: `66b70ed6f7736ad6bf087747fd1430abb3ee1f448a9e0de5fe2182d0b9e40df8`)
-  - AAB: `app/build/outputs/bundle/release/app-release.aab` (15,011,500 bytes, SHA-256: `65943ef98c0a1446d5b3ccdf7d7311b051441b792b51492bede2e28cffc1c452`)
+- **Automated Tests:** 359/359 unit and migration tests passing across 33 suites (0 failures, 0 errors, 0 skipped), plus 10/10 Android instrumentation tests passing on emulator runtime.
+- **Release Artifacts (v1.0.5):**
+  - APK: `release-evidence/v1.0.5/app-release-v1.0.5.apk` (16,068,176 bytes, SHA-256: `bee688207b07649b702e60bd7c7fe422d32951ddc9e8a606968a8160409296b6`)
+  - AAB: `release-evidence/v1.0.5/app-release-v1.0.5.aab` (15,047,478 bytes, SHA-256: `fa7ec66d7a0f52b32238063b983f8a3a29379af98413f48a30a52f6c8b88efe0`)
+  - Preserved Prior Release (v1.0.4): `release-evidence/v1.0.4/app-release-v1.0.4.apk` (`29ca73857f07180c671c63cbdfca581baae73e72a141be2a3f66fb586507c003`) & `app-release-v1.0.4.aab` (`8c6f9c8771e34cbd3dfbf13ccf9e7867a7e9006c979bf71fa20796ce2b1124fc`)
 - **Repository Location:** `/Users/vivekkumar/Documents/Project/android-app`
 
 ---
@@ -425,3 +426,46 @@ All development logs in `dev-logs/` and release evidence in `release-evidence/` 
 - **Runtime Verification:** Cold launch 550ms (`Status: ok`), pristine initial database (`Active (0)`, Net Balance `₹0.0`), 0 crashes, 0 ANRs, SAF export picker verified.
 - **Operator Readiness:** App is verified clean, hardened, and ready for operator original business data entry. Documented in [ONEPLUS_10R_V1.0.3_FRESH_INSTALL_REPORT.md](file:///Users/vivekkumar/Documents/Project/android-app/release-evidence/ONEPLUS_10R_V1.0.3_FRESH_INSTALL_REPORT.md).
 
+### 8. Release Candidate v1.0.4 (versionCode 5) — Customer & Supplier Separation + Transaction Deletion (2026-11-09)
+- **Target Platform:** Android 16 / API 36 (`compileSdk = 36`, `targetSdk = 36`, `minSdk = 26`).
+- **Release Version:** `v1.0.4`, `versionCode = 5`.
+- **Customer & Supplier Separation:**
+  - Dual-mode segmented toggle (`Customers | Suppliers`) placed directly above search bar with $\ge 48\text{dp}$ touch targets.
+  - Entity role field: `PersonRole { CUSTOMER, SUPPLIER }` added to `Person` (Room schema v6) and `PersonDomain`.
+  - Non-destructive Room migration: `ALTER TABLE persons ADD COLUMN role TEXT NOT NULL DEFAULT 'CUSTOMER'`.
+  - Same-phone independence: Customers and suppliers may share identical mobile numbers with zero merging or collision.
+  - Separate queries, DAOs, ViewModels, and search filtering.
+  - Supplier accounting rules:
+    - GOODS RECEIVED (RECEIVE): Increases payable ("You Owe").
+    - YOU PAID (GIVE): Decreases payable (Reduces "You Owe").
+    - Net Payable = $\sum \text{RECEIVE} - \sum \text{GIVE}$.
+    - Card 1: Total Payable = $\sum \max(\text{Net Payable}, 0)$ (non-offsetting advances).
+    - Card 2: Paid Today = $\sum \text{GIVE}$ transactions on current calendar date.
+- **Individual Transaction Deletion:**
+  - Overflow menu (`MoreVert`) on each transaction row with "Edit Transaction" and "Delete Transaction".
+  - Confirmation dialog with explicit party name, transaction type, formatted amount, and balance recalculation warning.
+  - Non-destructive soft delete (`isDeleted = 1`), immediate balance recalculation, and receipt file preservation.
+- **Backup & Restore Schema v4:**
+  - Export schema bumped to version 4 with explicit role preservation.
+  - Backward compatible with v1-v3 legacy backups.
+- **Release Verification & Evidence:**
+  - 350 unit tests passing (0 failures, 0 skipped).
+  - Clean dev logs check passing (6/6).
+  - Release APK SHA-256: `29ca73857f07180c671c63cbdfca581baae73e72a141be2a3f66fb586507c003`.
+  - Release AAB SHA-256: `8c6f9c8771e34cbd3dfbf13ccf9e7867a7e9006c979bf71fa20796ce2b1124fc`.
+  - Production key SHA-256: `4a449fe003664d2f10f52e44da7f9a2f9fde0fe5ce0759a8296e3b010fd9a7d5`.
+  - Complete release audit documented in [V1.0.4_CUSTOMER_SUPPLIER_AND_DELETE_VERIFICATION.md](file:///Users/vivekkumar/Documents/Project/android-app/release-evidence/V1.0.4_CUSTOMER_SUPPLIER_AND_DELETE_VERIFICATION.md).
+
+### 9. Supplier Contact Fix & Authorized OnePlus 10R Rollout — v1.0.5 / versionCode 6 (2026-11-10)
+- **Bug Fix Scope:**
+  - Added privacy-preserving system contact picker (`ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE` via `ActivityResultContracts.StartActivityForResult`, requiring zero `READ_CONTACTS` runtime permission) inside `AddPersonDialog` for both Supplier and Customer creation, with contact-lookup/entity fallback, multi-number disambiguation dialog, and graceful no-phone handling.
+  - Enhanced [`ContactSearchHelper`](file:///Users/vivekkumar/Documents/Project/android-app/app/src/main/java/com/kb/ledger/util/ContactSearchHelper.kt) to match full/partial phone numbers, spaces, trunk `0`, and country codes (`+91`, `91`, international prefixes) without mutating stored phone strings, while enforcing role isolation (`filterAndGroupForRole`) and numeric-vs-name query prefill (`splitInitialPersonQuery`).
+  - Displayed active/archived Suppliers immediately on the Suppliers dashboard (even prior to first transaction) while keeping Customer dashboard `Active (N)` behavior unchanged.
+  - Added duplicate-supplier detection (`findExactDuplicate` / `findPhoneDuplicate` + `HomeViewModel.addPerson`) scoped strictly per `PersonRole`.
+- **Database Schema:** Room Schema 6 and SAF Backup Schema 4 preserved unchanged (zero migrations needed).
+- **Automated Verification:** 359/359 unit tests passing across 33 suites + 10/10 Android instrumentation tests passing (`SupplierContactUiTest` + `DriveIntegrationTest`) + 6/6 dev-log retention tests + `git diff --check` clean.
+- **Physical OnePlus 10R Rollout (`CPH2423`, `LR8H55PB9PMRNFUO`, Android 15 / API 35):**
+  - Fresh pre-install SAF backup exported (`ledger_backup_20261110_140659.json`, `1,482,901` bytes, SHA-256 `510872b88f45977dcddc852cb4502fcb505ec53fc453a400b6546b80808ef2b0`) and preserved unchanged in dual local off-device directories (`/Users/vivekkumar/Documents/ledger_oneplus_safeguard_backup/v1.0.5_pre_install/` and `/Users/vivekkumar/.ledger_safeguard_backup_mirror/v1.0.5_pre_install/`).
+  - Installed `release-evidence/v1.0.5/app-release-v1.0.5.apk` in-place over `v1.0.4` via `adb -s LR8H55PB9PMRNFUO install -r` -> `Success`.
+  - Post-install verification: `versionName=1.0.5`, `versionCode=6`, signing cert `4a449fe0...`, `READ_CONTACTS=false`, `Total You Give ₹110.0`, `Active (2)` customers, Suppliers toggle & `ContactPickerActivity` entry verified read-only without creating test records, `4,190` person rows and `4` transaction rows (2 active, 2 deleted tombstones) matched 100% against pre-install backup, 0 crashes in logcat.
+  - Full installation report: [ONEPLUS_10R_V1.0.5_INSTALLATION_REPORT_2026-11-10.md](file:///Users/vivekkumar/Documents/Project/android-app/release-evidence/v1.0.5/ONEPLUS_10R_V1.0.5_INSTALLATION_REPORT_2026-11-10.md).

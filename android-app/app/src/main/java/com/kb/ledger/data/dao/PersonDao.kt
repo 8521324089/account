@@ -2,6 +2,7 @@ package com.kb.ledger.data.dao
 
 import androidx.room.*
 import com.kb.ledger.data.model.Person
+import com.kb.ledger.data.model.PersonRole
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -13,6 +14,10 @@ interface PersonDao {
     @Query("SELECT * FROM persons WHERE isDeleted = 0 AND isArchived = 0 ORDER BY name ASC")
     fun getActivePersons(): Flow<List<Person>>
 
+    /** Active persons filtered by role, alphabetical. */
+    @Query("SELECT * FROM persons WHERE isDeleted = 0 AND isArchived = 0 AND role = :role ORDER BY name ASC")
+    fun getActivePersonsByRole(role: PersonRole): Flow<List<Person>>
+
     /** Active persons with at least one non-deleted transaction (for dashboard). */
     @Query("""
         SELECT DISTINCT p.* FROM persons p
@@ -22,9 +27,22 @@ interface PersonDao {
     """)
     fun getActivePersonsWithTransactions(): Flow<List<Person>>
 
+    /** Active persons with at least one non-deleted transaction filtered by role (for dashboard). */
+    @Query("""
+        SELECT DISTINCT p.* FROM persons p
+        INNER JOIN transactions t ON p.id = t.personId
+        WHERE p.isDeleted = 0 AND p.isArchived = 0 AND t.isDeleted = 0 AND p.role = :role
+        ORDER BY p.name COLLATE NOCASE ASC
+    """)
+    fun getActivePersonsWithTransactionsByRole(role: PersonRole): Flow<List<Person>>
+
     /** Archived (non-deleted, archived) persons, alphabetical. */
     @Query("SELECT * FROM persons WHERE isDeleted = 0 AND isArchived = 1 ORDER BY name ASC")
     fun getArchivedPersons(): Flow<List<Person>>
+
+    /** Archived persons filtered by role, alphabetical. */
+    @Query("SELECT * FROM persons WHERE isDeleted = 0 AND isArchived = 1 AND role = :role ORDER BY name ASC")
+    fun getArchivedPersonsByRole(role: PersonRole): Flow<List<Person>>
 
     /** Archived persons with at least one non-deleted transaction (for dashboard). */
     @Query("""
@@ -35,9 +53,22 @@ interface PersonDao {
     """)
     fun getArchivedPersonsWithTransactions(): Flow<List<Person>>
 
+    /** Archived persons with at least one non-deleted transaction filtered by role (for dashboard). */
+    @Query("""
+        SELECT DISTINCT p.* FROM persons p
+        INNER JOIN transactions t ON p.id = t.personId
+        WHERE p.isDeleted = 0 AND p.isArchived = 1 AND t.isDeleted = 0 AND p.role = :role
+        ORDER BY p.name COLLATE NOCASE ASC
+    """)
+    fun getArchivedPersonsWithTransactionsByRole(role: PersonRole): Flow<List<Person>>
+
     /** All non-deleted persons, alphabetical. */
     @Query("SELECT * FROM persons WHERE isDeleted = 0 ORDER BY name ASC")
     fun getAllPersons(): Flow<List<Person>>
+
+    /** All non-deleted persons filtered by role, alphabetical. */
+    @Query("SELECT * FROM persons WHERE isDeleted = 0 AND role = :role ORDER BY name ASC")
+    fun getAllPersonsByRole(role: PersonRole): Flow<List<Person>>
 
     /** Persons with at least one non-deleted transaction, ordered by most recent activity. */
     @Query("""
@@ -54,10 +85,31 @@ interface PersonDao {
     """)
     fun getRecentPersons(limit: Int = 10): Flow<List<Person>>
 
+    /** Persons with at least one non-deleted transaction filtered by role, ordered by most recent activity. */
+    @Query("""
+        SELECT p.* FROM persons p
+        INNER JOIN (
+            SELECT personId, MAX(createdAt) AS lastTx
+            FROM transactions
+            WHERE isDeleted = 0
+            GROUP BY personId
+        ) t ON p.id = t.personId
+        WHERE p.isDeleted = 0 AND p.role = :role
+        ORDER BY t.lastTx DESC
+        LIMIT :limit
+    """)
+    fun getRecentPersonsByRole(role: PersonRole, limit: Int = 10): Flow<List<Person>>
+
     // ── Fetch (suspend) ──────────────────────────────────────────────────────
 
     @Query("SELECT * FROM persons WHERE isDeleted = 0")
     suspend fun getAllPersonsList(): List<Person>
+
+    @Query("SELECT * FROM persons WHERE isDeleted = 0 AND role = :role")
+    suspend fun getAllPersonsListByRole(role: PersonRole): List<Person>
+
+    @Query("SELECT * FROM persons WHERE phone = :phone AND role = :role AND isDeleted = 0")
+    suspend fun getPersonsByPhoneAndRole(phone: String, role: PersonRole): List<Person>
 
     /** All persons including soft-deleted tombstones (used for cloud sync & backup reconciliation). */
     @Query("SELECT * FROM persons")

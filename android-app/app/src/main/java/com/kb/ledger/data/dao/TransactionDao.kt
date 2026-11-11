@@ -83,6 +83,65 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE isDeleted = 0")
     fun observeAllTransactions(): Flow<List<Transaction>>
 
+    /**
+     * Customer Total You Give: Sum of absolute net balances where net customer balance < 0.
+     */
+    @Query("""
+        SELECT COALESCE(SUM(-balanceCents), 0) FROM (
+            SELECT t.personId,
+                   SUM(CASE WHEN t.type = 'RECEIVE' THEN t.amountCents ELSE -t.amountCents END) AS balanceCents
+            FROM transactions t
+            INNER JOIN persons p ON t.personId = p.id
+            WHERE t.isDeleted = 0 AND p.isDeleted = 0 AND p.role = 'CUSTOMER'
+            GROUP BY t.personId
+            HAVING balanceCents < 0
+        )
+    """)
+    fun getCustomerTotalYouGiveCents(): Flow<Long>
+
+    /**
+     * Customer Received Today: Sum of RECEIVE transactions from customers on current local date.
+     */
+    @Query("""
+        SELECT COALESCE(SUM(t.amountCents), 0)
+        FROM transactions t
+        INNER JOIN persons p ON t.personId = p.id
+        WHERE t.type = 'RECEIVE' AND t.isDeleted = 0 AND p.isDeleted = 0 AND p.role = 'CUSTOMER'
+          AND t.createdAt >= :todayStart AND t.createdAt <= :todayEnd
+    """)
+    fun getCustomerTotalReceiveTodayCents(todayStart: Long, todayEnd: Long): Flow<Long>
+
+    /**
+     * Supplier Total Payable:
+     * SUM(MAX(Supplier RECEIVE - Supplier GIVE, 0)) across active suppliers.
+     * Does NOT deduct advances of one supplier against payable to another.
+     */
+    @Query("""
+        SELECT COALESCE(SUM(payableCents), 0) FROM (
+            SELECT t.personId,
+                   SUM(CASE WHEN t.type = 'RECEIVE' THEN t.amountCents ELSE -t.amountCents END) AS payableCents
+            FROM transactions t
+            INNER JOIN persons p ON t.personId = p.id
+            WHERE t.isDeleted = 0 AND p.isDeleted = 0 AND p.role = 'SUPPLIER'
+            GROUP BY t.personId
+            HAVING payableCents > 0
+        )
+    """)
+    fun getSupplierTotalPayableCents(): Flow<Long>
+
+    /**
+     * Supplier Paid Today:
+     * SUM(Supplier GIVE transactions created on today's local date).
+     */
+    @Query("""
+        SELECT COALESCE(SUM(t.amountCents), 0)
+        FROM transactions t
+        INNER JOIN persons p ON t.personId = p.id
+        WHERE t.type = 'GIVE' AND t.isDeleted = 0 AND p.isDeleted = 0 AND p.role = 'SUPPLIER'
+          AND t.createdAt >= :todayStart AND t.createdAt <= :todayEnd
+    """)
+    fun getSupplierPaidTodayCents(todayStart: Long, todayEnd: Long): Flow<Long>
+
     // ── Fetch (suspend) ──────────────────────────────────────────────────────
 
     @Query("SELECT * FROM transactions WHERE isDeleted = 0")

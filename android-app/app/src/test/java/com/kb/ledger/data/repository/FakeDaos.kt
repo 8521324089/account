@@ -6,6 +6,7 @@ import com.kb.ledger.data.dao.RecurringRuleDao
 import com.kb.ledger.data.dao.SyncOperationDao
 import com.kb.ledger.data.dao.TransactionDao
 import com.kb.ledger.data.model.Person
+import com.kb.ledger.data.model.PersonRole
 import com.kb.ledger.data.model.RecurringRule
 import com.kb.ledger.data.model.SyncEntityType
 import com.kb.ledger.data.model.SyncOperation
@@ -63,6 +64,46 @@ class FakePersonDao : PersonDao {
 
     override fun getRecentPersons(limit: Int): Flow<List<Person>> =
         flow.map { list -> list.filter { !it.isDeleted && !it.isArchived }.take(limit) }
+
+    override fun getActivePersonsByRole(role: PersonRole): Flow<List<Person>> =
+        flow.map { list -> list.filter { !it.isDeleted && !it.isArchived && it.role == role }.sortedBy { it.name } }
+
+    override fun getActivePersonsWithTransactionsByRole(role: PersonRole): Flow<List<Person>> =
+        flow.map { list ->
+            val txDao = transactionDaoRef
+            if (txDao != null) {
+                val activeIdsWithTx = txDao.getAllTransactionsDirect().filter { !it.isDeleted }.map { it.personId }.toSet()
+                list.filter { !it.isDeleted && !it.isArchived && it.role == role && it.id in activeIdsWithTx }.sortedBy { it.name }
+            } else {
+                list.filter { !it.isDeleted && !it.isArchived && it.role == role }.sortedBy { it.name }
+            }
+        }
+
+    override fun getArchivedPersonsByRole(role: PersonRole): Flow<List<Person>> =
+        flow.map { list -> list.filter { !it.isDeleted && it.isArchived && it.role == role }.sortedBy { it.name } }
+
+    override fun getArchivedPersonsWithTransactionsByRole(role: PersonRole): Flow<List<Person>> =
+        flow.map { list ->
+            val txDao = transactionDaoRef
+            if (txDao != null) {
+                val idsWithTx = txDao.getAllTransactionsDirect().filter { !it.isDeleted }.map { it.personId }.toSet()
+                list.filter { !it.isDeleted && it.isArchived && it.role == role && it.id in idsWithTx }.sortedBy { it.name }
+            } else {
+                list.filter { !it.isDeleted && it.isArchived && it.role == role }.sortedBy { it.name }
+            }
+        }
+
+    override fun getAllPersonsByRole(role: PersonRole): Flow<List<Person>> =
+        flow.map { list -> list.filter { !it.isDeleted && it.role == role }.sortedBy { it.name } }
+
+    override fun getRecentPersonsByRole(role: PersonRole, limit: Int): Flow<List<Person>> =
+        flow.map { list -> list.filter { !it.isDeleted && !it.isArchived && it.role == role }.take(limit) }
+
+    override suspend fun getAllPersonsListByRole(role: PersonRole): List<Person> =
+        persons.values.filter { !it.isDeleted && it.role == role }
+
+    override suspend fun getPersonsByPhoneAndRole(phone: String, role: PersonRole): List<Person> =
+        persons.values.filter { !it.isDeleted && it.phone == phone && it.role == role }
 
     override suspend fun getAllPersonsList(): List<Person> =
         persons.values.filter { !it.isDeleted }
@@ -207,6 +248,48 @@ class FakeTransactionDao : TransactionDao {
     override fun getTotalReceiveTodayCents(todayStart: Long, todayEnd: Long): Flow<Long> =
         flow.map { list ->
             list.filter { !it.isDeleted && it.type == TransactionType.RECEIVE && it.createdAt >= todayStart && it.createdAt <= todayEnd }
+                .sumOf { it.amountCents }
+        }
+
+    override fun getCustomerTotalYouGiveCents(): Flow<Long> =
+        flow.map { list ->
+            val pDao = personDaoRef
+            val customerIds = pDao?.getAllPersonsIncludingDeleted()?.filter { !it.isDeleted && it.role == com.kb.ledger.data.model.PersonRole.CUSTOMER }?.map { it.id }?.toSet() ?: emptySet()
+            list.filter { !it.isDeleted && it.personId in customerIds }
+                .groupBy { it.personId }
+                .map { (_, txs) ->
+                    txs.sumOf { if (it.type == TransactionType.RECEIVE) it.amountCents else -it.amountCents }
+                }
+                .filter { it < 0 }
+                .sumOf { -it }
+        }
+
+    override fun getCustomerTotalReceiveTodayCents(todayStart: Long, todayEnd: Long): Flow<Long> =
+        flow.map { list ->
+            val pDao = personDaoRef
+            val customerIds = pDao?.getAllPersonsIncludingDeleted()?.filter { !it.isDeleted && it.role == com.kb.ledger.data.model.PersonRole.CUSTOMER }?.map { it.id }?.toSet() ?: emptySet()
+            list.filter { !it.isDeleted && it.personId in customerIds && it.type == TransactionType.RECEIVE && it.createdAt in todayStart..todayEnd }
+                .sumOf { it.amountCents }
+        }
+
+    override fun getSupplierTotalPayableCents(): Flow<Long> =
+        flow.map { list ->
+            val pDao = personDaoRef
+            val supplierIds = pDao?.getAllPersonsIncludingDeleted()?.filter { !it.isDeleted && it.role == com.kb.ledger.data.model.PersonRole.SUPPLIER }?.map { it.id }?.toSet() ?: emptySet()
+            list.filter { !it.isDeleted && it.personId in supplierIds }
+                .groupBy { it.personId }
+                .map { (_, txs) ->
+                    txs.sumOf { if (it.type == TransactionType.RECEIVE) it.amountCents else -it.amountCents }
+                }
+                .filter { it > 0 }
+                .sumOf { it }
+        }
+
+    override fun getSupplierPaidTodayCents(todayStart: Long, todayEnd: Long): Flow<Long> =
+        flow.map { list ->
+            val pDao = personDaoRef
+            val supplierIds = pDao?.getAllPersonsIncludingDeleted()?.filter { !it.isDeleted && it.role == com.kb.ledger.data.model.PersonRole.SUPPLIER }?.map { it.id }?.toSet() ?: emptySet()
+            list.filter { !it.isDeleted && it.personId in supplierIds && it.type == TransactionType.GIVE && it.createdAt in todayStart..todayEnd }
                 .sumOf { it.amountCents }
         }
 

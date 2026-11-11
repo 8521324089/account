@@ -27,13 +27,14 @@ import com.kb.ledger.data.model.Transaction
  *         added sync_operations table.
  *   4 → Added isArchived to persons.
  *   5 → Added recurring_rules table.
+ *   6 → Added role to persons.
  *
  * NOTE: [fallbackToDestructiveMigration] is intentionally removed.
  * Only explicit migrations are allowed to prevent accidental data loss.
  */
 @Database(
     entities = [Person::class, Transaction::class, SyncOperation::class, RecurringRule::class],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -219,6 +220,17 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration 5 → 6: Safe, non-destructive migration.
+         * Adds [role] column to `persons` table with default value 'CUSTOMER'.
+         * Preserves all existing persons, transactions, sync records, and recurring rules.
+         */
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `persons` ADD COLUMN `role` TEXT NOT NULL DEFAULT 'CUSTOMER';")
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -226,7 +238,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "ledger_database"
                 )
-                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                     .build()
                 INSTANCE = instance
                 instance

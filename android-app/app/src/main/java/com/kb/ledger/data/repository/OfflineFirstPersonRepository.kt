@@ -37,20 +37,44 @@ class OfflineFirstPersonRepository(
     override fun observeAllPersons(): Flow<List<PersonDomain>> =
         personDao.getAllPersons().map { list -> list.map { it.toDomain() } }
 
+    override fun observeAllPersons(role: com.kb.ledger.data.model.PersonRole?): Flow<List<PersonDomain>> =
+        if (role == null) observeAllPersons()
+        else personDao.getAllPersonsByRole(role).map { list -> list.map { it.toDomain() } }
+
     override fun observeActivePersons(): Flow<List<PersonDomain>> =
         personDao.getActivePersons().map { list -> list.map { it.toDomain() } }
+
+    override fun observeActivePersons(role: com.kb.ledger.data.model.PersonRole?): Flow<List<PersonDomain>> =
+        if (role == null) observeActivePersons()
+        else personDao.getActivePersonsByRole(role).map { list -> list.map { it.toDomain() } }
 
     override fun observeDashboardActivePersons(): Flow<List<PersonDomain>> =
         personDao.getActivePersonsWithTransactions().map { list -> list.map { it.toDomain() } }
 
+    override fun observeDashboardActivePersons(role: com.kb.ledger.data.model.PersonRole?): Flow<List<PersonDomain>> =
+        if (role == null) observeDashboardActivePersons()
+        else personDao.getActivePersonsWithTransactionsByRole(role).map { list -> list.map { it.toDomain() } }
+
     override fun observeArchivedPersons(): Flow<List<PersonDomain>> =
         personDao.getArchivedPersons().map { list -> list.map { it.toDomain() } }
+
+    override fun observeArchivedPersons(role: com.kb.ledger.data.model.PersonRole?): Flow<List<PersonDomain>> =
+        if (role == null) observeArchivedPersons()
+        else personDao.getArchivedPersonsByRole(role).map { list -> list.map { it.toDomain() } }
 
     override fun observeDashboardArchivedPersons(): Flow<List<PersonDomain>> =
         personDao.getArchivedPersonsWithTransactions().map { list -> list.map { it.toDomain() } }
 
+    override fun observeDashboardArchivedPersons(role: com.kb.ledger.data.model.PersonRole?): Flow<List<PersonDomain>> =
+        if (role == null) observeDashboardArchivedPersons()
+        else personDao.getArchivedPersonsWithTransactionsByRole(role).map { list -> list.map { it.toDomain() } }
+
     override fun observeRecentPersons(limit: Int): Flow<List<PersonDomain>> =
         personDao.getRecentPersons(limit).map { list -> list.map { it.toDomain() } }
+
+    override fun observeRecentPersons(limit: Int, role: com.kb.ledger.data.model.PersonRole?): Flow<List<PersonDomain>> =
+        if (role == null) observeRecentPersons(limit)
+        else personDao.getRecentPersonsByRole(role, limit).map { list -> list.map { it.toDomain() } }
 
     override suspend fun getPersonByLocalId(localId: Long): PersonDomain? =
         personDao.getPersonById(localId)?.toDomain()
@@ -280,7 +304,8 @@ fun Person.toDomain(): PersonDomain = PersonDomain(
     updatedBy = updatedBy,
     isDeleted = isDeleted,
     syncStatus = if (syncPending) SyncStatus.PENDING_UPLOAD else SyncStatus.SYNCED,
-    isArchived = isArchived
+    isArchived = isArchived,
+    role = role
 )
 
 fun PersonDomain.toEntity(): Person = Person(
@@ -294,5 +319,6 @@ fun PersonDomain.toEntity(): Person = Person(
     updatedBy = updatedBy,
     isDeleted = isDeleted,
     syncPending = syncStatus == SyncStatus.PENDING_UPLOAD || syncStatus == SyncStatus.PENDING_DELETE,
-    isArchived = isArchived
+    isArchived = isArchived,
+    role = role
 )

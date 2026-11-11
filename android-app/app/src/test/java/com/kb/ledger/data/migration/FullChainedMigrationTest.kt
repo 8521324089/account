@@ -13,7 +13,7 @@ import org.junit.Test
 import java.util.UUID
 
 /**
- * Full end-to-end chained migration test: Schema v2 -> v3 -> v4 -> v5.
+ * Full end-to-end chained migration test: Schema v2 -> v3 -> v4 -> v5 -> v6.
  *
  * Verifies that a realistic v2 database with representative customer accounts,
  * decimal transactions, legacy image references, and timestamps upgrades cleanly
@@ -58,7 +58,7 @@ class FullChainedMigrationTest {
     }
 
     @Test
-    fun fullMigration_v2_to_v5_preservesAllDataAndConvertsAccurately() {
+    fun fullMigration_v2_to_v6_preservesAllDataAndConvertsAccurately() {
         createV2Schema()
 
         // 1. Insert representative legacy v2 persons
@@ -86,13 +86,14 @@ class FullChainedMigrationTest {
             ('tx-10', 5, 20.20, 'RECEIVE', 'Snack reimbursement', NULL, 1700009000000);
         """.trimIndent())
 
-        // 3. Sequentially apply migrations: v2 -> v3, v3 -> v4, v4 -> v5
+        // 3. Sequentially apply migrations: v2 -> v3, v3 -> v4, v4 -> v5, v5 -> v6
         AppDatabase.MIGRATION_2_3.migrate(dbHelper.supportDatabase)
         AppDatabase.MIGRATION_3_4.migrate(dbHelper.supportDatabase)
         AppDatabase.MIGRATION_4_5.migrate(dbHelper.supportDatabase)
+        AppDatabase.MIGRATION_5_6.migrate(dbHelper.supportDatabase)
 
-        // 4. Verify persons in final v5 schema
-        data class PersonV5(
+        // 4. Verify persons in final v6 schema
+        data class PersonV6(
             val id: Long,
             val name: String,
             val phone: String,
@@ -102,13 +103,14 @@ class FullChainedMigrationTest {
             val updatedAt: Long,
             val isDeleted: Int,
             val syncPending: Int,
-            val isArchived: Int
+            val isArchived: Int,
+            val role: String
         )
 
         val persons = dbHelper.query(
-            "SELECT id, name, phone, contactId, cloudId, createdAt, updatedAt, isDeleted, syncPending, isArchived FROM persons ORDER BY id ASC"
+            "SELECT id, name, phone, contactId, cloudId, createdAt, updatedAt, isDeleted, syncPending, isArchived, role FROM persons ORDER BY id ASC"
         ) { rs ->
-            PersonV5(
+            PersonV6(
                 id = rs.getLong("id"),
                 name = rs.getString("name"),
                 phone = rs.getString("phone"),
@@ -118,7 +120,8 @@ class FullChainedMigrationTest {
                 updatedAt = rs.getLong("updatedAt"),
                 isDeleted = rs.getInt("isDeleted"),
                 syncPending = rs.getInt("syncPending"),
-                isArchived = rs.getInt("isArchived")
+                isArchived = rs.getInt("isArchived"),
+                role = rs.getString("role")
             )
         }
 
@@ -136,6 +139,7 @@ class FullChainedMigrationTest {
         assertEquals(0, p1.isDeleted)
         assertEquals(1, p1.syncPending)
         assertEquals(0, p1.isArchived)
+        assertEquals("CUSTOMER", p1.role)
 
         // Verify Person 2
         val p2 = persons[1]
@@ -149,6 +153,10 @@ class FullChainedMigrationTest {
         assertEquals(0, p2.isDeleted)
         assertEquals(1, p2.syncPending)
         assertEquals(0, p2.isArchived)
+        assertEquals("CUSTOMER", p2.role)
+
+        // Verify all migrated persons received default role 'CUSTOMER'
+        persons.forEach { assertEquals("CUSTOMER", it.role) }
 
         // Verify cloudId uniqueness across all persons
         val cloudIds = persons.mapNotNull { it.cloudId }.toSet()
@@ -257,7 +265,7 @@ class FullChainedMigrationTest {
     }
 
     @Test
-    fun migration_v2_to_v5_personWithoutTransactions_fallbackTimestampsSafely() {
+    fun migration_v2_to_v6_personWithoutTransactions_fallbackTimestampsSafely() {
         createV2Schema()
 
         // Person with no transactions at all
@@ -266,13 +274,16 @@ class FullChainedMigrationTest {
         AppDatabase.MIGRATION_2_3.migrate(dbHelper.supportDatabase)
         AppDatabase.MIGRATION_3_4.migrate(dbHelper.supportDatabase)
         AppDatabase.MIGRATION_4_5.migrate(dbHelper.supportDatabase)
+        AppDatabase.MIGRATION_5_6.migrate(dbHelper.supportDatabase)
 
-        val p = dbHelper.query("SELECT id, name, createdAt, updatedAt, isArchived FROM persons WHERE id = 99") { rs ->
-            Triple(rs.getLong("id"), rs.getLong("createdAt"), rs.getInt("isArchived"))
+        data class SinglePerson(val id: Long, val name: String, val createdAt: Long, val isArchived: Int, val role: String)
+        val p = dbHelper.query("SELECT id, name, createdAt, updatedAt, isArchived, role FROM persons WHERE id = 99") { rs ->
+            SinglePerson(rs.getLong("id"), rs.getString("name"), rs.getLong("createdAt"), rs.getInt("isArchived"), rs.getString("role"))
         }.first()
 
-        assertEquals(99L, p.first)
-        assertTrue("createdAt should fall back to a positive epoch timestamp", p.second > 0L)
-        assertEquals(0, p.third)
+        assertEquals(99L, p.id)
+        assertTrue("createdAt should fall back to a positive epoch timestamp", p.createdAt > 0L)
+        assertEquals(0, p.isArchived)
+        assertEquals("CUSTOMER", p.role)
     }
 }

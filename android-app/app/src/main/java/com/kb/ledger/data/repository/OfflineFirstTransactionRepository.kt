@@ -61,6 +61,18 @@ class OfflineFirstTransactionRepository(
     override fun observeTotalReceiveToday(todayStartMillis: Long, todayEndMillis: Long): Flow<Long> =
         transactionDao.getTotalReceiveTodayCents(todayStartMillis, todayEndMillis)
 
+    override fun observeCustomerTotalYouGive(): Flow<Long> =
+        transactionDao.getCustomerTotalYouGiveCents()
+
+    override fun observeCustomerReceiveToday(todayStartMillis: Long, todayEndMillis: Long): Flow<Long> =
+        transactionDao.getCustomerTotalReceiveTodayCents(todayStartMillis, todayEndMillis)
+
+    override fun observeSupplierTotalPayable(): Flow<Long> =
+        transactionDao.getSupplierTotalPayableCents()
+
+    override fun observeSupplierPaidToday(todayStartMillis: Long, todayEndMillis: Long): Flow<Long> =
+        transactionDao.getSupplierPaidTodayCents(todayStartMillis, todayEndMillis)
+
     override suspend fun updateTransaction(transaction: TransactionDomain): AppResult<TransactionDomain> = try {
         val now = System.currentTimeMillis()
         val existing = transactionDao.getTransactionById(transaction.id)

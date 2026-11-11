@@ -66,12 +66,12 @@ class BackupManagerSchemaTest {
     // ── Schema version tests ─────────────────────────────────────────────────
 
     @Test
-    fun backupData_defaultSchemaVersion_is3() {
+    fun backupData_defaultSchemaVersion_is4() {
         val backup = BackupData(
             persons = emptyList(),
             transactions = emptyList()
         )
-        assertEquals(3, backup.schemaVersion)
+        assertEquals(4, backup.schemaVersion)
         assertEquals(BackupData.CURRENT_SCHEMA_VERSION, backup.schemaVersion)
     }
 

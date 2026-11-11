@@ -323,7 +323,7 @@ class BackupExportSafetyAndFeedbackTest {
 
         assertEquals("All 150 persons must be restored", 150, recoveredBackup.persons.size)
         assertEquals("All 300 transactions must be restored", 300, recoveredBackup.transactions.size)
-        assertEquals("Current schema version 3 must be preserved", 3, recoveredBackup.schemaVersion)
+        assertEquals("Current schema version must be preserved", BackupData.CURRENT_SCHEMA_VERSION, recoveredBackup.schemaVersion)
     }
 
     // ── Task B: UI Feedback Mapping Tests ────────────────────────────────────

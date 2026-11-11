@@ -1,0 +1,239 @@
+{
+  "billImagesByTxId": {
+    "054004bb-0e4f-4be4-b081-45b58bbd258a": "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"
+  },
+  "exportDate": 1794288860141,
+  "persons": [
+    {
+      "cloudId": "8f91432e-b8b4-418b-8758-872009ae9458",
+      "createdAt": 1794287197237,
+      "id": 1,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "Alice Smith",
+      "phone": "9111111111",
+      "role": "CUSTOMER",
+      "syncPending": true,
+      "updatedAt": 1794287197241
+    },
+    {
+      "cloudId": "55dd86c6-2a14-43e9-93cf-64581289fbc0",
+      "createdAt": 1794287311367,
+      "id": 2,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "Bob Johnson",
+      "phone": "9222222222",
+      "role": "CUSTOMER",
+      "syncPending": true,
+      "updatedAt": 1794287311367
+    },
+    {
+      "cloudId": "6d35d0ff-3684-4a28-93ef-ba9dde2f433b",
+      "createdAt": 1794287495981,
+      "id": 3,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "David Miller",
+      "phone": "9444444444",
+      "role": "CUSTOMER",
+      "syncPending": true,
+      "updatedAt": 1794287495982
+    },
+    {
+      "cloudId": "3160e36e-cda5-4796-b637-2d2d072977f7",
+      "createdAt": 1794288180245,
+      "id": 4,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "Apex Supplies",
+      "phone": "9666666666",
+      "role": "SUPPLIER",
+      "syncPending": true,
+      "updatedAt": 1794288180245
+    },
+    {
+      "cloudId": "679eda35-5804-491b-b5d1-e193a76e7000",
+      "createdAt": 1794288245629,
+      "id": 5,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "Beta Distributors",
+      "phone": "9777777777",
+      "role": "SUPPLIER",
+      "syncPending": true,
+      "updatedAt": 1794288245629
+    },
+    {
+      "cloudId": "08f4f87e-531e-4337-90cb-9437dfa915da",
+      "createdAt": 1794288403810,
+      "id": 6,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "Nexus Enterprise",
+      "phone": "9888888888",
+      "role": "SUPPLIER",
+      "syncPending": true,
+      "updatedAt": 1794288403810
+    },
+    {
+      "cloudId": "eea03723-ccf9-4e99-9d5c-61edac28e678",
+      "createdAt": 1794288475778,
+      "id": 7,
+      "isArchived": false,
+      "isDeleted": false,
+      "name": "Nexus Enterprise",
+      "phone": "9888888888",
+      "role": "CUSTOMER",
+      "syncPending": true,
+      "updatedAt": 1794288475778
+    }
+  ],
+  "recurringRules": [
+    {
+      "amountCents": 25000,
+      "createdAt": 1794288828933,
+      "frequency": "MONTHLY",
+      "id": "050781bf-822f-4568-b483-11221a7b66e9",
+      "isPaused": false,
+      "nextExecutionDate": 1794288817693,
+      "personId": 1,
+      "startDate": 1794288817693,
+      "type": "RECEIVE"
+    }
+  ],
+  "schemaVersion": 4,
+  "transactions": [
+    {
+      "amountCents": 50000,
+      "createdAt": 1794287230544,
+      "id": "22380c97-49ab-4bc5-afee-822efe20371c",
+      "isDeleted": false,
+      "personId": 1,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794287233455
+    },
+    {
+      "amountCents": 120000,
+      "createdAt": 1794287245243,
+      "id": "054004bb-0e4f-4be4-b081-45b58bbd258a",
+      "imageUri": "/data/user/0/com.kb.ledger/files/receipts/054004bb-0e4f-4be4-b081-45b58bbd258a.jpg",
+      "isDeleted": false,
+      "personId": 1,
+      "syncPending": true,
+      "type": "RECEIVE",
+      "updatedAt": 1794288773552
+    },
+    {
+      "amountCents": 100000,
+      "createdAt": 1794287329559,
+      "id": "b3953bf0-4dd1-4fb9-b039-ed1a0f986c37",
+      "isDeleted": false,
+      "personId": 2,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794287332391
+    },
+    {
+      "amountCents": 50000,
+      "createdAt": 1794287508494,
+      "id": "29e006e4-bca9-404e-9b5d-ed696610506d",
+      "isDeleted": true,
+      "personId": 3,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794287591386
+    },
+    {
+      "amountCents": 70000,
+      "createdAt": 1794287515843,
+      "id": "ebe8cf19-9cbf-4057-ba61-791aad869f79",
+      "isDeleted": true,
+      "personId": 3,
+      "syncPending": true,
+      "type": "RECEIVE",
+      "updatedAt": 1794287764773
+    },
+    {
+      "amountCents": 1000000,
+      "createdAt": 1794288198777,
+      "id": "1115fd8c-5405-48ab-a980-f0893516efd9",
+      "isDeleted": false,
+      "personId": 4,
+      "syncPending": true,
+      "type": "RECEIVE",
+      "updatedAt": 1794288201105
+    },
+    {
+      "amountCents": 300000,
+      "createdAt": 1794288202142,
+      "id": "b9ac74e7-1a45-4203-913f-12fa52f33ddc",
+      "isDeleted": false,
+      "personId": 4,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794288204424
+    },
+    {
+      "amountCents": 200000,
+      "createdAt": 1794288259009,
+      "id": "db126b65-5d55-499e-bade-92ed39aa6066",
+      "isDeleted": false,
+      "personId": 5,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794288261282
+    },
+    {
+      "amountCents": 100000,
+      "createdAt": 1794288289360,
+      "id": "9fdedd30-1ec0-4cf8-939b-978ea9bc6190",
+      "isDeleted": true,
+      "personId": 4,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794288300550
+    },
+    {
+      "amountCents": 600000,
+      "createdAt": 1794288419593,
+      "id": "153ed5f4-ff99-405d-95cb-c0d864db9b55",
+      "isDeleted": false,
+      "personId": 6,
+      "syncPending": true,
+      "type": "RECEIVE",
+      "updatedAt": 1794288421788
+    },
+    {
+      "amountCents": 150000,
+      "createdAt": 1794288422842,
+      "id": "47e6f66f-c2f5-4a88-8a67-d09c262cde34",
+      "isDeleted": false,
+      "personId": 6,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794288424946
+    },
+    {
+      "amountCents": 250000,
+      "createdAt": 1794288488510,
+      "id": "21fbc69c-8985-4529-b5a2-e5fe11d26917",
+      "isDeleted": false,
+      "personId": 7,
+      "syncPending": true,
+      "type": "GIVE",
+      "updatedAt": 1794288490618
+    },
+    {
+      "amountCents": 50000,
+      "createdAt": 1794288558377,
+      "id": "296021f5-39e0-48ec-9b5d-db0391cdf4d0",
+      "isDeleted": false,
+      "personId": 7,
+      "syncPending": true,
+      "type": "RECEIVE",
+      "updatedAt": 1794288560568
+    }
+  ]
+}

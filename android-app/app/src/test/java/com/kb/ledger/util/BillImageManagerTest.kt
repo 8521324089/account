@@ -257,7 +257,7 @@ class BillImageManagerTest {
             billImagesByTxId = mapOf(txId to encoded)
         )
 
-        assertEquals(3, backup.schemaVersion)
+        assertEquals(4, backup.schemaVersion)
 
         val json = gson.toJson(backup)
         val restored = gson.fromJson(json, BackupData::class.java)

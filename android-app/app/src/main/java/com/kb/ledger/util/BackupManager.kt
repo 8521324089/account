@@ -31,6 +31,7 @@ import java.util.UUID
  *   1 — persons + transactions (original double amounts)
  *   2 — persons + transactions (amountCents Long, added schemaVersion field)
  *   3 — adds recurringRules; adds billImagesByTxId (base64-encoded image bytes)
+ *   4 — adds role to persons (CUSTOMER vs SUPPLIER)
  *
  * The [billImagesByTxId] map key is the transaction UUID.
  * The value is the Base64-encoded bytes of the bill image file from internal storage.
@@ -51,7 +52,7 @@ data class BackupData(
     val schemaVersion: Int = CURRENT_SCHEMA_VERSION
 ) {
     companion object {
-        const val CURRENT_SCHEMA_VERSION = 3
+        const val CURRENT_SCHEMA_VERSION = 4
     }
 }
 
@@ -484,7 +485,7 @@ class BackupManager(
     }
 
     companion object {
-        const val CURRENT_SCHEMA_VERSION = 3
+        const val CURRENT_SCHEMA_VERSION = 4
 
         /**
          * Generates a default, timestamped export filename for SAF CreateDocument.
@@ -811,10 +812,12 @@ class BackupManager(
                 // ── Case A: Empty Database ───────────────────────────────────────
                 // Preserve original backup IDs if > 0 to maintain exact parity.
                 for (p in backupData.persons) {
+                    val resolvedRole = (p.role as? com.kb.ledger.data.model.PersonRole) ?: com.kb.ledger.data.model.PersonRole.CUSTOMER
                     val targetId = if (p.id > 0) p.id else 0L
                     val entity = p.copy(
                         id = targetId,
                         cloudId = p.cloudId.takeIf { !it.isNullOrBlank() } ?: UUID.randomUUID().toString(),
+                        role = resolvedRole,
                         updatedAt = p.updatedAt.takeIf { it > 0 } ?: now,
                         syncPending = true
                     )
@@ -839,6 +842,7 @@ class BackupManager(
                     .groupBy { ContactSearchHelper.normalizePhone(it.phone) }
 
                 for (p in backupData.persons) {
+                    val resolvedRole = (p.role as? com.kb.ledger.data.model.PersonRole) ?: com.kb.ledger.data.model.PersonRole.CUSTOMER
                     // 1. Try matching by cloudId (stable unique identity)
                     val matchByCloudId = if (!p.cloudId.isNullOrBlank()) localByCloudId[p.cloudId] else null
 
@@ -846,7 +850,8 @@ class BackupManager(
                     //    a. Neither record has a cloudId (legacy pre-v3 records)
                     //    b. Phone is valid (at least 7 digits, normalized)
                     //    c. Normalized names match (prevents merging different people sharing a family/business number)
-                    //    d. Candidate is unique and not already claimed
+                    //    d. Roles match (never merge customer with supplier even if same phone)
+                    //    e. Candidate is unique and not already claimed
                     val normName = ContactSearchHelper.normalizeName(p.name)
                     val normPhone = ContactSearchHelper.normalizePhone(p.phone)
                     val digits = p.phone.filter { it.isDigit() }
@@ -854,7 +859,7 @@ class BackupManager(
 
                     val matchByPhone = if (matchByCloudId == null && isPhoneValid) {
                         val candidates = localByNormPhone[normPhone].orEmpty()
-                            .filter { it.cloudId.isNullOrBlank() && !claimedLocalPersonIds.contains(it.id) }
+                            .filter { it.cloudId.isNullOrBlank() && !claimedLocalPersonIds.contains(it.id) && it.role == resolvedRole }
                         // Only match if normalized names match AND there is exactly one unambiguous candidate
                         candidates.singleOrNull { ContactSearchHelper.normalizeName(it.name) == normName }
                     } else null
@@ -878,6 +883,7 @@ class BackupManager(
                             val updated = matchedPerson.copy(
                                 name = p.name.ifBlank { matchedPerson.name },
                                 phone = p.phone.ifBlank { matchedPerson.phone },
+                                role = matchedPerson.role,
                                 contactId = p.contactId ?: matchedPerson.contactId,
                                 cloudId = matchedPerson.cloudId ?: p.cloudId ?: UUID.randomUUID().toString(),
                                 updatedAt = p.updatedAt,
@@ -897,6 +903,7 @@ class BackupManager(
                         val newPerson = p.copy(
                             id = 0L,
                             cloudId = newCloudId,
+                            role = resolvedRole,
                             updatedAt = p.updatedAt.takeIf { it > 0 } ?: now,
                             syncPending = true
                         )

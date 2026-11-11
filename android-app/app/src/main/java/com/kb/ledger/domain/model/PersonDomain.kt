@@ -1,9 +1,12 @@
 package com.kb.ledger.domain.model
 
+import com.kb.ledger.data.model.PersonRole
+
 /**
- * Domain-layer representation of a customer.
+ * Domain-layer representation of a customer or supplier.
  * Decoupled from both Room entities and Drive JSON.
  *
+ * [role]         Ledger role: CUSTOMER (default) or SUPPLIER.
  * [cloudId]      Stable UUID used in Google Drive JSON. Null until first sync.
  * [localId]      Room auto-generated Long. Used for local DB queries only.
  * [syncStatus]   Current sync state of this record.
@@ -22,5 +25,6 @@ data class PersonDomain(
     val updatedBy: String? = null,
     val isDeleted: Boolean = false,
     val syncStatus: SyncStatus = SyncStatus.PENDING_UPLOAD,
-    val isArchived: Boolean = false
+    val isArchived: Boolean = false,
+    val role: PersonRole = PersonRole.CUSTOMER
 )

@@ -1,6 +1,7 @@
 package com.kb.ledger.util
 
 import com.kb.ledger.data.model.Person
+import com.kb.ledger.data.model.PersonRole
 import java.util.Locale
 
 /**
@@ -76,16 +77,21 @@ object ContactSearchHelper {
     fun normalize(name: String): String = normalizeName(name)
 
     /**
-     * Composite comparison key: normalized name + "|||" + normalized phone.
+     * Composite comparison key: role + "|||" + normalized name + "|||" + normalized phone.
+     * Including role ensures Customers and Suppliers sharing the same name and mobile number
+     * are never treated as duplicate records and are kept strictly distinct.
      */
     fun comparisonKey(person: Person): String {
         val normName = normalizeName(person.name)
         val normPhone = normalizePhone(person.phone)
-        return "$normName|||$normPhone"
+        return "${person.role.name}|||$normName|||$normPhone"
     }
 
     /**
      * Checks if a person matches the user search query.
+     * Supports full and partial matches across names and phone numbers (including
+     * numbers formatted with spaces, hyphens, or leading country/trunk codes).
+     * Never mutates the stored person phone number.
      */
     fun matchesQuery(person: Person, query: String): Boolean {
         val trimmedQuery = query.trim()
@@ -104,7 +110,64 @@ object ContactSearchHelper {
         if (person.name.lowercase(Locale.getDefault()).contains(queryLower)) return true
         if (person.phone.contains(trimmedQuery)) return true
 
+        // Enhanced digit-based matching when the query is phone-like (contains digits, no letters)
+        if (!trimmedQuery.any { it.isLetter() }) {
+            val queryDigits = trimmedQuery.filter { it.isDigit() }
+            if (queryDigits.isNotEmpty()) {
+                val personDigits = person.phone.filter { it.isDigit() }
+                if (personDigits.contains(queryDigits)) return true
+
+                if (normPhone.length == 10 && normPhone[0] in '6'..'9') {
+                    if ("91$normPhone".contains(queryDigits) ||
+                        "0091$normPhone".contains(queryDigits) ||
+                        "0$normPhone".contains(queryDigits)
+                    ) {
+                        return true
+                    }
+                }
+
+                // Full international query matching stored national number without country code
+                if (personDigits.length >= 7 && queryDigits.length > personDigits.length && queryDigits.endsWith(personDigits)) {
+                    return true
+                }
+
+                // Partial query starting with country code or trunk zero (e.g. "+91 98765", "91 98765", "09876")
+                val stripped = stripLeadingCountryOrTrunkForSearch(trimmedQuery, queryDigits)
+                if (stripped != null && stripped.length >= 4) {
+                    if (normPhone.contains(stripped) || personDigits.contains(stripped)) return true
+                }
+            }
+        }
+
         return false
+    }
+
+    private fun stripLeadingCountryOrTrunkForSearch(trimmedQuery: String, queryDigits: String): String? {
+        if (queryDigits.isEmpty()) return null
+
+        if (trimmedQuery.startsWith("+")) {
+            if (trimmedQuery.startsWith("+91") && queryDigits.startsWith("91") && queryDigits.length > 2) {
+                return queryDigits.substring(2)
+            }
+            val sepIdx = trimmedQuery.indexOfFirst { it == ' ' || it == '-' }
+            if (sepIdx in 2..5) {
+                val afterCc = trimmedQuery.substring(sepIdx + 1).filter { it.isDigit() }
+                if (afterCc.length >= 4) return afterCc
+            }
+            if (queryDigits.length >= 11) {
+                return queryDigits.substring(1)
+            }
+        }
+
+        if ((trimmedQuery.startsWith("91 ") || trimmedQuery.startsWith("91-")) && queryDigits.length > 2) {
+            return queryDigits.substring(2)
+        }
+
+        if (queryDigits.startsWith("0") && queryDigits.length >= 5) {
+            return queryDigits.substring(1)
+        }
+
+        return null
     }
 
     /**
@@ -223,6 +286,72 @@ object ContactSearchHelper {
                 displayName = displayName,
                 contacts = disambiguatedList
             )
+        }
+    }
+
+    /**
+     * Filters and groups non-deleted persons strictly matching [role].
+     */
+    fun filterAndGroupForRole(
+        persons: List<Person>,
+        role: PersonRole,
+        query: String,
+        lastTxTimes: Map<Long, Long> = emptyMap()
+    ): List<ContactGroup> {
+        val scoped = persons.filter { !it.isDeleted && it.role == role }
+        return filterAndGroup(scoped, query, lastTxTimes)
+    }
+
+    /**
+     * Classifies an initial search query into `(initialName, initialPhone)`.
+     * If the query contains digits and no alphabetic letters (phone-like input),
+     * populates the phone field instead of mistakenly putting a phone number in the name field.
+     */
+    fun splitInitialPersonQuery(query: String): Pair<String, String> {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) return "" to ""
+        val isPhoneLike = !trimmed.any { it.isLetter() } &&
+            trimmed.any { it.isDigit() } &&
+            trimmed.all { it.isDigit() || it in "+-(). /" || it.isWhitespace() }
+        return if (isPhoneLike) "" to trimmed else trimmed to ""
+    }
+
+    /**
+     * Finds an existing non-deleted person in the exact same [role] sharing both
+     * the same normalized name and normalized phone number.
+     */
+    fun findExactDuplicate(
+        persons: List<Person>,
+        name: String,
+        phone: String,
+        role: PersonRole
+    ): Person? {
+        val normName = normalizeName(name)
+        val normPhone = normalizePhone(phone)
+        if (normName.isBlank()) return null
+        return persons.firstOrNull { p ->
+            !p.isDeleted &&
+                p.role == role &&
+                normalizeName(p.name) == normName &&
+                normalizePhone(p.phone) == normPhone
+        }
+    }
+
+    /**
+     * Finds an existing non-deleted person in the same [role] sharing the same
+     * valid normalized phone number (>= 7 digits).
+     */
+    fun findPhoneDuplicate(
+        persons: List<Person>,
+        phone: String,
+        role: PersonRole
+    ): Person? {
+        val normPhone = normalizePhone(phone)
+        if (normPhone.isBlank() || normPhone.count { it.isDigit() } < 7) return null
+        return persons.firstOrNull { p ->
+            !p.isDeleted &&
+                p.role == role &&
+                normalizePhone(p.phone) == normPhone
         }
     }
 }

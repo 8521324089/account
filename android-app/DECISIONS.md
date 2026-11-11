@@ -708,8 +708,8 @@ A follow-up audit of the SAF backup/restore implementation was conducted to vali
 
 ## 33. Process-Wide Staging Synchronization, Content Validation, and Safe Diagnostic Logging
 
-**Date:** 2026-10-25  
-**Status:** Approved and Implemented  
+**Date:** 2026-10-25
+**Status:** Approved and Implemented
 **Problem:**
 1. A potential concurrency race existed between `BackupManager.importData` and `recoverOrphanedStagingImages`: if recovery ran while an import was in flight before its Room transaction committed, recovery would query Room, find no transaction record, and prematurely delete active `import_tmp_` staging files or in-flight `promo_tmp_` intermediate copies.
 2. `isValidReceiptFile` previously validated only file length ($\ge$ 4 bytes), which allowed arbitrary non-image files or truncated headers $\ge$ 4 bytes to pass as valid.
@@ -738,8 +738,8 @@ A follow-up audit of the SAF backup/restore implementation was conducted to vali
 
 ## 34. Staged SAF Backup Export, Destination Stream Abstraction, and Actionable UI Feedback
 
-**Date:** 2026-10-25  
-**Status:** Approved and Implemented  
+**Date:** 2026-10-25
+**Status:** Approved and Implemented
 **Problem:**
 1. SAF backup export previously constructed and serialized the complete JSON payload directly into the destination output stream opened from `context.contentResolver.openOutputStream(uri)`. If Room querying, image Base64 encoding, or JSON serialization threw an exception midway, the user-selected destination file on external storage was truncated or left in a corrupt state.
 2. In `MainActivity.kt`, the `importLauncher` result was silently discarded (`uri?.let { scope.launch { backupManager.importData(it) } }`), providing zero visual feedback to the user on completion, corrupt backup rejection, or missing receipt attachments.
@@ -775,8 +775,8 @@ A follow-up audit of the SAF backup/restore implementation was conducted to vali
 
 ## 35. Backup Export Concurrency Coordination, Missing Attachment Detection, and Versioned Filenames
 
-**Date:** 2026-10-25  
-**Status:** Approved and Implemented  
+**Date:** 2026-10-25
+**Status:** Approved and Implemented
 **Problem:**
 1. `BackupManager.exportData()` previously executed without acquiring `backupSyncMutex`, creating a concurrency race where export could read receipt files or Room records while a concurrent restore (`importData`) or startup self-healing (`recoverOrphanedStagingImages`) was actively deleting, staging, or promoting them.
 2. `BackupManager.importData()` previously only accounted for missing images if a payload entry was present in `backupData.billImagesByTxId` but failed decoding, header validation, or promotion. If a backup envelope had transactions claiming an attachment (`imageUri` or `imageFileId`) but completely omitted the payload entry, those missing attachments were not reported in `missingImageTxIds`, preventing user warning.
@@ -807,8 +807,8 @@ A follow-up audit of the SAF backup/restore implementation was conducted to vali
 
 ## 36. Backup Coroutine Cancellation Propagation and Soft-Deleted Attachment Exclusion
 
-**Date:** 2026-10-30  
-**Status:** Approved and Implemented  
+**Date:** 2026-10-30
+**Status:** Approved and Implemented
 **Problem:**
 1. `BackupManager.exportData()` previously caught generic `Exception`, which swallowed Kotlin's `CancellationException` and either returned `ExportResult(success = false)` or converted cancellation during image extraction into a false missing-attachment warning, breaking structured concurrency and preventing caller cancellation.
 2. In `BackupManager.kt` (`importData` and `exportData`), soft-deleted transactions (`isDeleted == true`) that lacked attachment payloads or internal image files were inadvertently included in `missingImageTxIds`, producing confusing user-facing warnings ("Backup restored successfully, but X bill attachments could not be restored") for deleted records.
@@ -833,9 +833,9 @@ A follow-up audit of the SAF backup/restore implementation was conducted to vali
 
 ## 37. Final Release Readiness Verification, Multi-Tier Image Validation, and Signature Incompatibility Standards
 
-**Date:** 2026-10-30  
-**Status:** Approved & Formally Verified  
-**Category:** Release Engineering, Cryptography & Data Safety Standards  
+**Date:** 2026-10-30
+**Status:** Approved & Formally Verified
+**Category:** Release Engineering, Cryptography & Data Safety Standards
 
 ### Context
 Prior to distributing Ledger v1.0.1 (`versionCode = 2`), a formal, evidence-based release audit was required to evaluate readiness for clean installations, existing user updates, and migration from a physical OnePlus device running a debug-signed build.
@@ -860,9 +860,9 @@ Prior to distributing Ledger v1.0.1 (`versionCode = 2`), a formal, evidence-base
 
 ## 38. Google Sign-In Production Defect Remediation and Clean-Install Release Candidate Verification
 
-**Date:** 2026-10-30  
-**Status:** Approved & Formally Verified  
-**Category:** Defect Remediation, User Safety & Release Candidate Standards  
+**Date:** 2026-10-30
+**Status:** Approved & Formally Verified
+**Category:** Defect Remediation, User Safety & Release Candidate Standards
 
 ### Context
 During release-readiness auditing of Ledger v1.0.1 (`versionCode = 2`), tapping "Sign In with Google" in the navigation drawer crashed the application because `WEB_CLIENT_ID` in `GoogleAuthManager.kt` was set to placeholder `"REPLACE_WITH_YOUR_WEB_CLIENT_ID.apps.googleusercontent.com"`. In addition, the drawer displayed misleading claims that Google Drive cloud sync was operational. Cloud sync was not operational.
@@ -895,9 +895,9 @@ During release-readiness auditing of Ledger v1.0.1 (`versionCode = 2`), tapping 
 
 ## Decision 39: Android ANR Root Cause Resolution, Deterministic UI Smoke Test Standards, Native Receipt Image Decoding, and Version 1.0.2 Release Gate
 
-**Date:** 2026-10-30  
-**Status:** Approved & Formally Verified  
-**Category:** ANR Investigation, Quality Assurance, Native Media Decoding & Final Release Gate  
+**Date:** 2026-10-30
+**Status:** Approved & Formally Verified
+**Category:** ANR Investigation, Quality Assurance, Native Media Decoding & Final Release Gate
 
 ### Context
 Following Session 30 clean-install release candidate testing, recorded emulator history showed an Android ANR dialog, an investigation of `ANR in com.kb.ledger`, an app force-stop, and later disabling of Android ANR dialogs. In addition, the smoke test produced unexpected inputs: an intended GIVE amount of ₹500 resulted in ₹5,003, and the synthetic customer name was truncated. Before approving release, a formal investigation was mandated to determine the exact root cause, repeat the smoke test deterministically, verify genuine JPEG receipt restoration with native Android decoding, bump versionCode to 3 / versionName to 1.0.2, and issue final release gate verdicts.
@@ -934,9 +934,9 @@ Following Session 30 clean-install release candidate testing, recorded emulator 
 
 ## Decision 40: Camera Capture Receipt Attachment Flow, UI/UX Overhaul, Android 16 (API 36) Migration, and Version 1.0.3 Release Gate
 
-**Date:** 2026-11-01  
-**Status:** Approved & Formally Verified  
-**Category:** Camera Integration, Privacy Sanitization, Design System, Platform Upgrade & Final Release Gate  
+**Date:** 2026-11-01
+**Status:** Approved & Formally Verified
+**Category:** Camera Integration, Privacy Sanitization, Design System, Platform Upgrade & Final Release Gate
 
 ### Context
 To prepare Ledger for general production release, the bill/receipt attachment flow required a working camera capture option alongside modern gallery picking, a professional and consistent UI/UX overhaul across all primary screens, Android 16 (API 36) submission compliance, automated test suite expansion, and comprehensive emulator-based release gate verification.
@@ -985,9 +985,9 @@ To prepare Ledger for general production release, the bill/receipt attachment fl
 
 ## Decision 41: Per-Transaction Sync Message Removal, Aggregate Sync Counter Backlog, and Final Evidence Reconciliation (v1.0.3)
 
-**Date:** 2026-11-01  
-**Status:** Implemented, Rebuilt & Formally Verified on Android 16 (API 36) Emulator  
-**Category:** UI/UX De-cluttering, Data Integrity & Next-Release Backlog  
+**Date:** 2026-11-01
+**Status:** Implemented, Rebuilt & Formally Verified on Android 16 (API 36) Emulator
+**Category:** UI/UX De-cluttering, Data Integrity & Next-Release Backlog
 
 ### Context
 In v1.0.3 testing on the Android 16 emulator, each transaction row displayed an individual "Pending sync" badge alongside the transaction date/time with a cloud icon. In this offline release, cloud sync is unconfigured, making per-transaction sync status confusing, distracting, and misleading. Furthermore, reconciliation of earlier automated command retries vs. final successful executions was required.
@@ -1021,9 +1021,9 @@ In v1.0.3 testing on the Android 16 emulator, each transaction row displayed an 
 
 ## Decision 42: OnePlus 10R Physical Device Safeguard Audit, Cryptographic Upgrade Blocker Enforcement, and Off-Device Backup Verification
 
-**Date:** 2026-11-01  
-**Status:** Completed & Formally Verified  
-**Category:** Physical Device Safety, Cryptographic Security & Data Preservation  
+**Date:** 2026-11-01
+**Status:** Completed & Formally Verified
+**Category:** Physical Device Safety, Cryptographic Security & Data Preservation
 
 ### Context
 User requested safe installation of Ledger v1.0.3 on their physical OnePlus 10R phone containing real financial records and contacts. Preserving existing customer records, balances, transactions, and receipt files took absolute priority over installation.
@@ -1056,3 +1056,70 @@ User requested safe installation of Ledger v1.0.3 on their physical OnePlus 10R 
    - Logcat audit: 0 crashes, 0 ANRs.
 6. **Physical Phone Safety Guarantee:**
    - The OnePlus 10R was NOT uninstalled, cleared, or modified. All user data remains 100% intact.
+
+---
+
+## Decision 43: Customer & Supplier Ledger Separation and Individual Transaction Deletion (v1.0.4)
+
+**Date:** 2026-11-09
+**Status:** Completed & Formally Verified
+**Category:** Domain Modeling, UI/UX, Accounting & Data Integrity
+
+### Context
+Users requested separating customer ledgers from supplier ledgers and providing an individual transaction deletion capability without destabilizing the local-first architecture, backup fidelity, or existing financial records.
+
+### Decisions & Verified Outcomes
+1. **Customer & Supplier Role Separation:**
+   - Added `PersonRole { CUSTOMER, SUPPLIER }` to `Person` entity and `PersonDomain`.
+   - Bumped Room schema to version 6 with non-destructive migration (`ALTER TABLE persons ADD COLUMN role TEXT NOT NULL DEFAULT 'CUSTOMER'`).
+   - Phone numbers are completely independent across roles: `ContactSearchHelper` keys entities by `${person.role.name}|||$normName|||$normPhone`, strictly preventing duplicate deduplication or merging across roles.
+2. **Dedicated Supplier Accounting Rules:**
+   - GOODS RECEIVED (RECEIVE): Goods/credit received from supplier (Increases payable / "You Owe").
+   - YOU PAID (GIVE): Payment made to supplier (Decreases payable / Reduces "You Owe").
+   - Net Supplier Payable: $\sum \text{RECEIVE} - \sum \text{GIVE}$ ($> 0$: You Owe; $< 0$: Advance; $= 0$: Settled).
+   - Dashboard Card 1 (Total Payable): $\sum \max(\text{Net Payable}, 0)$ so supplier advances never offset debts owed to other suppliers.
+   - Dashboard Card 2 (Paid Today): Sum of all supplier `GIVE` transactions on the current calendar date.
+   - Action buttons adapt contextually to "YOU PAID ₹" and "GOODS RECEIVED ₹" with distinct colors.
+3. **Safe Individual Transaction Deletion:**
+   - Added accessible overflow menu (`MoreVert`) on each transaction row with "Edit Transaction" and "Delete Transaction".
+   - Added confirmation dialog displaying party name, transaction type, formatted amount, and explicit warning that balance will recalculate immediately.
+   - Uses non-destructive soft deletion (`isDeleted = 1`), queues sync tombstones, recalculates Room balances reactively, and preserves receipt files on disk.
+4. **SAF Backup Schema v4:**
+   - Bumped backup schema version to 4 with explicit `role` serialization.
+   - Fully backward-compatible with legacy v1–v3 backups.
+5. **Emulator Verification:**
+   - 350/350 unit tests passing.
+   - In-place upgrade, supplier accounting, transaction deletion, same-phone independence, and SAF round-trip verified on Android 16 (`emulator-5554`).
+   - 8 evidence screenshots archived in `release-evidence/v1.0.4/`.
+
+---
+
+## Decision 44: Privacy-Preserving System Contact Picker for Suppliers, Enhanced Phone Search, Duplicate Prevention & Authorized v1.0.5 Physical Rollout
+
+**Date:** 2026-11-10
+**Status:** Implemented, Verified & Deployed In-Place on Physical OnePlus 10R
+**Category:** Contacts Privacy, Search Architecture, Bug Fix & Safe Rollout
+
+### Context
+On Ledger v1.0.4 on the physical OnePlus 10R (`CPH2423`, Android 15 / API 35, `READ_CONTACTS=false`), Customer mode displayed phone numbers because address-book entries had previously been synced into `PersonRole.CUSTOMER`. Switching to Supplier mode isolated `PersonRole.SUPPLIER` (0 entries initially), exposing four gaps:
+1. `AddPersonDialog` had no system contact picker to populate Name and Phone when creating a Supplier (or Customer).
+2. Searching a phone number before tapping `"Add '<query>' as New Supplier"` populated Name instead of Phone.
+3. `ContactSearchHelper.matchesQuery` did not strip country/trunk prefixes on partial queries (e.g., `+91 98765`, `09876`).
+4. Zero-transaction newly created Suppliers were hidden from the empty-search Suppliers dashboard (`getActivePersonsWithTransactionsByRole`).
+
+### Decisions & Verified Outcomes
+1. **Privacy-Preserving System Contact Picker (`ContactManager`):**
+   - Uses `Intent(Intent.ACTION_PICK).apply { type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE }` rather than forcing broad runtime `READ_CONTACTS` grants; relies on Android's transient single-row URI permission grant on the picked `data/` URI.
+   - `ContactManager.resolvePickedContact` also falls back gracefully for contact lookup/entity URIs when accessible, deduplicates multi-number contacts via `deduplicatePhoneOptions`, triggers an in-app `"Select Phone Number"` dialog if multiple distinct numbers exist, and handles 0-phone contacts with clear inline guidance.
+   - Both Name and Phone fields remain editable before saving.
+2. **Search & Duplicate Prevention (`ContactSearchHelper` & `HomeViewModel`):**
+   - Enhanced digit-level matching inside `matchesQuery` for purely numeric/phone queries (spaces, hyphens, `+91`/`91`, trunk `0`, and international prefixes) without mutating stored numbers and without false-matching mixed text queries.
+   - Added `splitInitialPersonQuery`, `filterAndGroupForRole`, `findExactDuplicate`, and `findPhoneDuplicate` scoped strictly within `PersonRole` so Customers and Suppliers sharing identical phone numbers remain independent while exact same-role duplicates are blocked (`Open Existing`).
+   - Updated Suppliers dashboard `dashboardActivePersons` / `dashboardArchivedPersons` to surface all user-created Suppliers even before their first transaction, while preserving Customer dashboard filtering (`getActivePersonsWithTransactionsByRole`) unchanged.
+3. **Zero Schema Churn:**
+   - Kept Room Schema v6 and Backup Schema v4 completely untouched.
+4. **Verification & Authorized Physical Rollout (`v1.0.5`, `versionCode 6`):**
+   - **Unit Tests:** 359/359 passed across 33 suites (including 9 new tests in `SupplierContactAndSearchTest`).
+   - **Instrumentation Tests (`emulator-5554`):** 10/10 passed (`SupplierContactUiTest` 7 tests + `DriveIntegrationTest` 3 tests).
+   - **API 35 Emulator E2E (`emulator-5556`):** Verified native picker without `READ_CONTACTS`, multi-number pick, duplicate detection, search queries, Customer isolation, and SAF Schema 4 backup/restore.
+   - **OnePlus 10R (`LR8H55PB9PMRNFUO`) Deployment:** Exported & validated fresh v1.0.4 SAF backup (`ledger_backup_20261110_140659.json`, `1,482,901` bytes, SHA-256 `510872b8...`, dual local copies), installed `app-release-v1.0.5.apk` (`bee68820...`, cert `4a449fe0...`) via `adb install -r`, confirmed 100% pre/post match across 4,190 persons (`CUSTOMER`) and 4 transactions (2 active, 2 tombstones), verified Suppliers/ContactPicker read-only, and confirmed 0 crashes/migration errors in logcat.
